@@ -53,7 +53,7 @@ func NewMessageQueueWithOwnership(config QueueConfig, owner *Ownership, postfix 
 		return nil, errors.New(fmt.Sprintf("Could not create message queue %s: %-v", config.GetFile(), err))
 	}
 
-	err = ApplyPermissions(owner, &config)
+	err = ApplyPermissions(owner, config.GetFile(), config.Mode)
 	if err != nil {
 		return messageQueue, errors.New(fmt.Sprintf("Could not apply permissions %s: %-v", config.GetFile(), err))
 	}

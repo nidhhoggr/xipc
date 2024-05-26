@@ -78,7 +78,7 @@ func (o *Ownership) IsValid() bool {
 	return hasGroup || hasUser
 }
 
-func ApplyPermissions(o *Ownership, config *QueueConfig) error {
+func ApplyPermissions(o *Ownership, file string, mode int) error {
 
 	if o != nil {
 		hasGroup, group, err := o.HasGroup()
@@ -91,17 +91,17 @@ func ApplyPermissions(o *Ownership, config *QueueConfig) error {
 		}
 
 		if hasGroup || hasUser {
-			err = os.Chmod(config.GetFile(), os.FileMode(config.Mode))
+			err = os.Chmod(file, os.FileMode(mode))
 		} else {
-			return os.Chmod(config.GetFile(), os.FileMode(config.Mode))
+			return os.Chmod(file, os.FileMode(mode))
 		}
 		if hasGroup && hasUser {
-			err = os.Chown(config.GetFile(), user.Gid, group.Gid)
+			err = os.Chown(file, user.Gid, group.Gid)
 		} else if hasUser {
-			err = os.Chown(config.GetFile(), user.Gid, user.Gid)
+			err = os.Chown(file, user.Gid, user.Gid)
 		}
 		return err
 	} else {
-		return os.Chmod(config.GetFile(), os.FileMode(config.Mode))
+		return os.Chmod(file, os.FileMode(mode))
 	}
 }
