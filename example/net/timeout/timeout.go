@@ -14,8 +14,8 @@ const maxRequestTickNum = 10
 
 const queue_name = "goqr_example_timeout"
 
-var mqr xipc.IMqResponder
-var mqs xipc.IMqRequester
+var mqr xipc.IResponder
+var mqs xipc.IRequester
 var config = net.QueueConfig{
 	Name:             queue_name,
 	ClientTimeout:    time.Second * 10,
@@ -117,7 +117,7 @@ func requester(c chan int) {
 
 }
 
-func requestResponse(mqs xipc.IMqRequester, msg string, c chan goqResponse) {
+func requestResponse(mqs xipc.IRequester, msg string, c chan goqResponse) {
 
 	if len(msg) > 0 {
 		err := mqs.Request([]byte(msg))
@@ -128,7 +128,7 @@ func requestResponse(mqs xipc.IMqRequester, msg string, c chan goqResponse) {
 		log.Printf("Requester: sent a new request: %s", msg)
 	}
 
-	resp, err := mqs.WaitForResponseTimed(time.Second * 5)
+	resp, err := mqs.ReadTimed(time.Second * 5)
 
 	if err != nil {
 

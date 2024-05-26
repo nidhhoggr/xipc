@@ -11,7 +11,7 @@ import (
 
 const maxRequestTickNum = 10
 
-const queue_name = "pmqr_example_mqrequest"
+const queue_name = "pmqr_example_Request"
 
 var owner = pmq.Ownership{
 	//Username: "nobody", //uncomment to test ownership handling and errors
@@ -50,7 +50,7 @@ func responder(c chan int) {
 	count := 0
 	for {
 		count++
-		if err := mqr.HandleMqRequest(requestProcessor); err != nil {
+		if err := mqr.HandleRequestProto(requestProcessor); err != nil {
 			fmt.Printf("Responder: error handling request: %s\n", err)
 			continue
 		}
@@ -82,7 +82,7 @@ func requester(c chan int) {
 	for {
 		count++
 		request := fmt.Sprintf("Hello, World : %d\n", count)
-		if err := mqs.RequestUsingMqRequest(&xipc.MqRequest{
+		if err := mqs.RequestUsingRequest(&xipc.Request{
 			Arg1: request,
 		}); err != nil {
 			fmt.Printf("Requester: error requesting request: %s\n", err)
@@ -91,7 +91,7 @@ func requester(c chan int) {
 
 		fmt.Printf("Requester: sent a new request: %s", request)
 
-		msg, err := mqs.WaitForMqResponse()
+		msg, err := mqs.WaitForResponseProto()
 
 		if err != nil {
 			fmt.Printf("Requester: error getting response: %s\n", err)
@@ -107,8 +107,8 @@ func requester(c chan int) {
 	}
 }
 
-func requestProcessor(request *xipc.MqRequest) (*xipc.MqResponse, error) {
-	response := xipc.MqResponse{}
+func requestProcessor(request *xipc.Request) (*xipc.Response, error) {
+	response := xipc.Response{}
 	//assigns the response.request_id
 	response.PrepareFromRequest(request)
 	response.ValueStr = fmt.Sprintf("I recieved request: %s\n", request.Arg1)

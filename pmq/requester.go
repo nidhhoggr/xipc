@@ -7,14 +7,14 @@ import (
 	"time"
 )
 
-type MqRequester BidirectionalQueue
+type Requester BidirectionalQueue
 
-func NewRequester(config *QueueConfig, owner *Ownership) xipc.IMqRequester {
+func NewRequester(config *QueueConfig, owner *Ownership) xipc.IRequester {
 
 	requester, errRqst := openQueueForRequester(config, owner, "rqst")
 	responder, errResp := openQueueForRequester(config, owner, "resp")
 
-	var mqs xipc.IMqRequester = &MqRequester{
+	var mqs xipc.IRequester = &Requester{
 		requester,
 		errRqst,
 		responder,
@@ -31,64 +31,56 @@ func openQueueForRequester(config *QueueConfig, owner *Ownership, postfix string
 	return NewMessageQueueWithOwnership(*config, owner, postfix)
 }
 
-func (mqs *MqRequester) Read() ([]byte, error) {
-	data, _, err := mqs.MqResp.Receive()
+func (mqs *Requester) Read() ([]byte, error) {
+	data, _, err := mqs.Resp.Receive()
 	return data, err
 }
 
-func (mqs *MqRequester) ReadTimed(duration time.Duration) ([]byte, error) {
-	msg, _, err := mqs.MqResp.TimedReceive(duration)
+func (mqs *Requester) ReadTimed(duration time.Duration) ([]byte, error) {
+	msg, _, err := mqs.Resp.TimedReceive(duration)
 	return msg, err
 }
 
-func (mqs *MqRequester) Write(data []byte) error {
-	return mqs.MqRqst.Send(data, 0)
+func (mqs *Requester) Write(data []byte) error {
+	return mqs.Rqst.Send(data, 0)
 }
 
-func (mqs *MqRequester) Request(data []byte) error {
+func (mqs *Requester) Request(data []byte) error {
 	return mqs.Write(data)
 }
 
-func (mqs *MqRequester) RequestUsingMqRequest(req *xipc.MqRequest) error {
-	return xipc.RequestUsingMqRequest(mqs, req)
+func (mqs *Requester) RequestUsingRequest(req *xipc.Request) error {
+	return xipc.RequestUsingRequest(mqs, req)
 }
 
-func (mqs *MqRequester) RequestUsingProto(req *proto.Message) error {
+func (mqs *Requester) RequestUsingProto(req *proto.Message) error {
 	return xipc.RequestUsingProto(mqs, req)
 }
 
-func (mqs *MqRequester) WaitForResponse() ([]byte, error) {
-	return mqs.Read()
-}
-
-func (mqs *MqRequester) WaitForResponseTimed(duration time.Duration) ([]byte, error) {
-	return mqs.ReadTimed(duration)
-}
-
-func (mqs *MqRequester) WaitForProto(pbm proto.Message) (*proto.Message, error) {
+func (mqs *Requester) WaitForProto(pbm proto.Message) (*proto.Message, error) {
 	return xipc.WaitForProto(mqs, pbm)
 }
 
-func (mqs *MqRequester) WaitForProtoTimed(pbm proto.Message, duration time.Duration) (*proto.Message, error) {
+func (mqs *Requester) WaitForProtoTimed(pbm proto.Message, duration time.Duration) (*proto.Message, error) {
 	return xipc.WaitForProtoTimed(mqs, pbm, duration)
 }
 
-func (mqs *MqRequester) WaitForMqResponse() (*xipc.MqResponse, error) {
-	return xipc.WaitForMqResponse(mqs)
+func (mqs *Requester) WaitForResponseProto() (*xipc.Response, error) {
+	return xipc.WaitForResponseProto(mqs)
 }
 
-func (mqs *MqRequester) WaitForMqResponseTimed(duration time.Duration) (*xipc.MqResponse, error) {
-	return xipc.WaitForMqResponseTimed(mqs, duration)
+func (mqs *Requester) WaitForResponseProtoTimed(duration time.Duration) (*xipc.Response, error) {
+	return xipc.WaitForResponseProtoTimed(mqs, duration)
 }
 
-func (mqs *MqRequester) HasErrors() bool {
+func (mqs *Requester) HasErrors() bool {
 	return (*BidirectionalQueue)(mqs).HasErrors()
 }
 
-func (mqs *MqRequester) Error() error {
+func (mqs *Requester) Error() error {
 	return (*BidirectionalQueue)(mqs).Error()
 }
 
-func (mqs *MqRequester) CloseRequester() error {
+func (mqs *Requester) CloseRequester() error {
 	return (*BidirectionalQueue)(mqs).Close()
 }

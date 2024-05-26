@@ -10,8 +10,8 @@ import (
 const maxRequestTickNum = 10
 const queue_name = "goqr_example_bytes"
 
-var mqr xipc.IMqResponder
-var mqs xipc.IMqRequester
+var mqr xipc.IResponder
+var mqs xipc.IRequester
 var config = net.QueueConfig{
 	Name:             queue_name,
 	ClientTimeout:    0,
@@ -93,7 +93,7 @@ func requester(c chan int) {
 
 		log.Printf("Requester: sent a new request: %s", request)
 
-		msg, err := mqs.WaitForResponse()
+		msg, err := mqs.Read()
 
 		if err != nil {
 			log.Printf("Requester: error getting response: %s\n", err)

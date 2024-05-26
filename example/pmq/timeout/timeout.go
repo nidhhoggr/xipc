@@ -76,7 +76,7 @@ func requester(c chan int) {
 	}
 
 	count := 0
-	ch := make(chan pmqResponse)
+	ch := make(chan pResponse)
 	for {
 		count++
 		request := fmt.Sprintf("Hello, World : %d\n", count)
@@ -87,7 +87,7 @@ func requester(c chan int) {
 		}
 	}
 
-	result := make([]pmqResponse, maxRequestTickNum)
+	result := make([]pResponse, maxRequestTickNum)
 	for i := range result {
 		result[i] = <-ch
 		if result[i].status {
@@ -99,24 +99,24 @@ func requester(c chan int) {
 	<-c
 }
 
-func requestResponse(mqs xipc.IMqRequester, msg string, c chan pmqResponse) {
+func requestResponse(mqs xipc.IRequester, msg string, c chan pResponse) {
 	if err := mqs.Request([]byte(msg)); err != nil {
-		c <- pmqResponse{fmt.Sprintf("%s", err), false}
+		c <- pResponse{fmt.Sprintf("%s", err), false}
 		return
 	}
 	fmt.Printf("Requester: sent a new request: %s", msg)
 
-	resp, err := mqs.WaitForResponseTimed(time.Second * 10)
+	resp, err := mqs.ReadTimed(time.Second * 10)
 
 	if err != nil {
-		c <- pmqResponse{fmt.Sprintf("%s", err), false}
+		c <- pResponse{fmt.Sprintf("%s", err), false}
 		return
 	}
 
-	c <- pmqResponse{fmt.Sprintf("Requester: got a response: %s\n", resp), true}
+	c <- pResponse{fmt.Sprintf("Requester: got a response: %s\n", resp), true}
 }
 
-type pmqResponse struct {
+type pResponse struct {
 	response string
 	status   bool
 }

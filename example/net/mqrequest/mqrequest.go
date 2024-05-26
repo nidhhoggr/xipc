@@ -9,10 +9,10 @@ import (
 
 const maxRequestTickNum = 10
 
-const queue_name = "goqr_example_mqrequest"
+const queue_name = "goqr_example_Request"
 
-var mqr xipc.IMqResponder
-var mqs xipc.IMqRequester
+var mqr xipc.IResponder
+var mqs xipc.IRequester
 var config = net.QueueConfig{
 	Name:             queue_name,
 	ClientTimeout:    0,
@@ -53,7 +53,7 @@ func responder(c chan int) {
 	count := 0
 	for {
 		count++
-		if err := mqr.HandleMqRequest(requestProcessor); err != nil {
+		if err := mqr.HandleRequestProto(requestProcessor); err != nil {
 			log.Printf("Responder: error handling request: %s\n", err)
 			continue
 		}
@@ -83,7 +83,7 @@ func requester(c chan int) {
 	for {
 		count++
 		request := fmt.Sprintf("Hello, World : %d\n", count)
-		if err := mqs.RequestUsingMqRequest(&xipc.MqRequest{
+		if err := mqs.RequestUsingRequest(&xipc.Request{
 			Arg1: request,
 		}); err != nil {
 			log.Printf("Requester: error requesting request: %s\n", err)
@@ -92,7 +92,7 @@ func requester(c chan int) {
 
 		log.Printf("Requester: sent a new request: %s", request)
 
-		msg, err := mqs.WaitForMqResponse()
+		msg, err := mqs.WaitForResponseProto()
 
 		if err != nil {
 			log.Printf("Requester: error getting response: %s\n", err)
@@ -108,8 +108,8 @@ func requester(c chan int) {
 	}
 }
 
-func requestProcessor(request *xipc.MqRequest) (*xipc.MqResponse, error) {
-	response := xipc.MqResponse{}
+func requestProcessor(request *xipc.Request) (*xipc.Response, error) {
+	response := xipc.Response{}
 	//assigns the response.request_id
 	response.PrepareFromRequest(request)
 	response.ValueStr = fmt.Sprintf("I recieved request: %s\n", request.Arg1)

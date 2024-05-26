@@ -114,7 +114,7 @@ func requester(c chan int) {
 	}
 }
 
-func requestUsingCmd(mqs xipc.IMqRequester, req *protos.Cmd) error {
+func requestUsingCmd(mqs xipc.IRequester, req *protos.Cmd) error {
 	if len(req.Id) == 0 {
 		req.Id = uuid.NewString()
 	}
@@ -122,17 +122,17 @@ func requestUsingCmd(mqs xipc.IMqRequester, req *protos.Cmd) error {
 	return mqs.RequestUsingProto(&pbm)
 }
 
-func waitForCmdResponse(mqs xipc.IMqRequester) (*protos.CmdResp, error) {
-	mqResp := &protos.CmdResp{}
-	_, err := mqs.WaitForProto(mqResp)
+func waitForCmdResponse(mqs xipc.IRequester) (*protos.CmdResp, error) {
+	Resp := &protos.CmdResp{}
+	_, err := mqs.WaitForProto(Resp)
 	if err != nil {
 		return nil, err
 	}
-	return mqResp, err
+	return Resp, err
 }
 
 // handleCmdRequest provides a concrete implementation of HandleRequestFromProto using the local Cmd protobuf type
-func handleCmdRequest(mqr xipc.IMqResponder) error {
+func handleCmdRequest(mqr xipc.IResponder) error {
 
 	cmd := &protos.Cmd{}
 

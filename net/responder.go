@@ -10,13 +10,13 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type MqResponder struct {
-	MqResp  *gipc.Server
+type Responder struct {
+	Resp    *gipc.Server
 	ErrResp error
 	Logger  *logrus.Logger
 }
 
-func NewResponder(config *QueueConfig) xipc.IMqResponder {
+func NewResponder(config *QueueConfig) xipc.IResponder {
 
 	logger := xipc.InitLogging(config.LogLevel)
 
@@ -27,7 +27,7 @@ func NewResponder(config *QueueConfig) xipc.IMqResponder {
 		Encryption:        false,
 	})
 
-	var mqr xipc.IMqResponder = &MqResponder{
+	var mqr xipc.IResponder = &Responder{
 		responder,
 		errResp,
 		logger,
@@ -36,8 +36,8 @@ func NewResponder(config *QueueConfig) xipc.IMqResponder {
 	return mqr
 }
 
-func (mqr *MqResponder) Read() ([]byte, error) {
-	msg, err := mqr.MqResp.Read()
+func (mqr *Responder) Read() ([]byte, error) {
+	msg, err := mqr.Resp.Read()
 	if msg.MsgType < 1 {
 		mqr.Logger.Debugln("using recursion")
 		time.Sleep(2 * time.Microsecond)
@@ -47,8 +47,8 @@ func (mqr *MqResponder) Read() ([]byte, error) {
 	}
 }
 
-func (mqr *MqResponder) ReadTimed(duration time.Duration) ([]byte, error) {
-	msg, err := mqr.MqResp.ReadTimed(duration)
+func (mqr *Responder) ReadTimed(duration time.Duration) ([]byte, error) {
+	msg, err := mqr.Resp.ReadTimed(duration)
 	if msg.MsgType < 1 {
 		mqr.Logger.Debugln("using recursion")
 		time.Sleep(2 * time.Microsecond)
@@ -58,8 +58,8 @@ func (mqr *MqResponder) ReadTimed(duration time.Duration) ([]byte, error) {
 	}
 }
 
-func (mqr *MqResponder) Write(data []byte) error {
-	err := mqr.MqResp.Write(DEFAULT_MSG_TYPE, data)
+func (mqr *Responder) Write(data []byte) error {
+	err := mqr.Resp.Write(DEFAULT_MSG_TYPE, data)
 	if err != nil && err.Error() == "Connecting" {
 		mqr.Logger.Infoln("Connecting error, reattempting")
 		time.Sleep(xipc.REQUEST_RECURSION_WAITTIME * time.Second)
@@ -68,34 +68,34 @@ func (mqr *MqResponder) Write(data []byte) error {
 	return err
 }
 
-func (mqr *MqResponder) HandleRequest(msgHandler xipc.ResponderCallback) error {
+func (mqr *Responder) HandleRequest(msgHandler xipc.ResponderCallback) error {
 	return xipc.HandleRequestWithLag(mqr, msgHandler, 0)
 }
 
 // HandleRequestWithLag used for testing purposes to simulate lagging responder
-func (mqr *MqResponder) HandleRequestWithLag(msgHandler xipc.ResponderCallback, lag int) error {
+func (mqr *Responder) HandleRequestWithLag(msgHandler xipc.ResponderCallback, lag int) error {
 	return xipc.HandleRequestWithLag(mqr, msgHandler, lag)
 }
 
-// HandleMqRequest provides a concrete implementation of HandleRequestFromProto using the local MqRequest type
-func (mqr *MqResponder) HandleMqRequest(requestProcessor xipc.ResponderMqRequestCallback) error {
-	return xipc.HandleMqRequest(mqr, requestProcessor)
+// HandleRequestProto provides a concrete implementation of HandleRequestFromProto using the local Request type
+func (mqr *Responder) HandleRequestProto(requestProcessor xipc.ResponderRequestProtoCallback) error {
+	return xipc.HandleRequestProto(mqr, requestProcessor)
 }
 
 // HandleRequestFromProto used to process arbitrary protobuf messages using a callback
-func (mqr *MqResponder) HandleRequestFromProto(protocMsg proto.Message, msgHandler xipc.ResponderFromProtoMessageCallback) error {
+func (mqr *Responder) HandleRequestFromProto(protocMsg proto.Message, msgHandler xipc.ResponderFromProtoMessageCallback) error {
 	return xipc.HandleRequestFromProto(mqr, protocMsg, msgHandler)
 }
 
-func (mqr *MqResponder) HasErrors() bool {
+func (mqr *Responder) HasErrors() bool {
 	return mqr.ErrResp != nil
 }
 
-func (mqr *MqResponder) Error() error {
+func (mqr *Responder) Error() error {
 	return fmt.Errorf("requester: %w", mqr.ErrResp)
 }
 
-func (mqr *MqResponder) CloseResponder() error {
-	mqr.MqResp.Close()
+func (mqr *Responder) CloseResponder() error {
+	mqr.Resp.Close()
 	return nil
 }

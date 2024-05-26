@@ -7,57 +7,57 @@ import (
 	"time"
 )
 
-type IMqResponder interface {
+type IResponder interface {
 	Read() ([]byte, error)
 	ReadTimed(time.Duration) ([]byte, error)
 	Write([]byte) error
 	HandleRequest(ResponderCallback) error
 	HandleRequestWithLag(ResponderCallback, int) error
-	HandleMqRequest(ResponderMqRequestCallback) error
+	HandleRequestProto(ResponderRequestProtoCallback) error
 	HandleRequestFromProto(proto.Message, ResponderFromProtoMessageCallback) error
 	HasErrors() bool
 	Error() error
 	CloseResponder() error
 }
 
-type MqResponse protos.Response
+type Response protos.Response
 
 type ResponderCallback func(msq []byte) (processed []byte, err error)
 
-type ResponderMqRequestCallback func(mqs *MqRequest) (mqr *MqResponse, err error)
+type ResponderRequestProtoCallback func(mqs *Request) (mqr *Response, err error)
 
 type ResponderFromProtoMessageCallback func() (processed []byte, err error)
 
-// AsProtobuf used to convert the local type equivalent (MqResponse)
+// AsProtobuf used to convert the local type equivalent (Response)
 // back to its protobuf instance
-func (mqr *MqResponse) AsProtobuf() *protos.Response {
+func (mqr *Response) AsProtobuf() *protos.Response {
 	return (*protos.Response)(mqr)
 }
 
-func (mqr *MqResponse) PrepareFromRequest(mqs *MqRequest) *MqResponse {
+func (mqr *Response) PrepareFromRequest(mqs *Request) *Response {
 	mqr.RequestId = mqs.Id
 	return mqr
 }
 
-// ProtoResponseToMqResponse used to convert the protobuf to the local
-// type equivalent (MqResponse) for leveraging instance methods
-func ProtoResponseToMqResponse(mqr *protos.Response) *MqResponse {
-	return (*MqResponse)(mqr)
+// ProtoResponseToResponse used to convert the protobuf to the local
+// type equivalent (Response) for leveraging instance methods
+func ProtoResponseToResponse(mqr *protos.Response) *Response {
+	return (*Response)(mqr)
 }
 
-// HandleMqRequest provides a concrete implementation of HandleRequestFromProto using the local MqRequest type
-func HandleMqRequest(mqr IMqResponder, requestProcessor ResponderMqRequestCallback) error {
+// HandleRequestProto provides a concrete implementation of HandleRequestFromProto using the local Request type
+func HandleRequestProto(mqr IResponder, requestProcessor ResponderRequestProtoCallback) error {
 
 	mqReq := &protos.Request{}
 
 	return mqr.HandleRequestFromProto(mqReq, func() (processed []byte, err error) {
 
-		mqResp, err := requestProcessor(ProtoRequestToMqRequest(mqReq))
+		Resp, err := requestProcessor(ProtoRequestToRequest(mqReq))
 		if err != nil {
 			return nil, err
 		}
 
-		data, err := proto.Marshal(mqResp.AsProtobuf())
+		data, err := proto.Marshal(Resp.AsProtobuf())
 
 		if err != nil {
 			return nil, fmt.Errorf("marshaling error: %w", err)
@@ -68,7 +68,7 @@ func HandleMqRequest(mqr IMqResponder, requestProcessor ResponderMqRequestCallba
 }
 
 // HandleRequestWithLag used for testing purposes to simulate lagging responder
-func HandleRequestWithLag(mqr IMqResponder, msgHandler ResponderCallback, lag int) error {
+func HandleRequestWithLag(mqr IResponder, msgHandler ResponderCallback, lag int) error {
 
 	msg, err := mqr.Read()
 	if err != nil {
@@ -89,7 +89,7 @@ func HandleRequestWithLag(mqr IMqResponder, msgHandler ResponderCallback, lag in
 }
 
 // HandleRequestFromProto used to process arbitrary protobuf messages using a callback
-func HandleRequestFromProto(mqr IMqResponder, protocMsg proto.Message, msgHandler ResponderFromProtoMessageCallback) error {
+func HandleRequestFromProto(mqr IResponder, protocMsg proto.Message, msgHandler ResponderFromProtoMessageCallback) error {
 
 	msg, err := mqr.Read()
 	if err != nil {
