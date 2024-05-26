@@ -1,7 +1,6 @@
 package net
 
 import (
-	"fmt"
 	"github.com/joe-at-startupmedia/gipc"
 	"github.com/joe-at-startupmedia/xipc"
 	"github.com/sirupsen/logrus"
@@ -92,7 +91,7 @@ func (mqr *Responder) HasErrors() bool {
 }
 
 func (mqr *Responder) Error() error {
-	return fmt.Errorf("requester: %w", mqr.ErrResp)
+	return mqr.ErrResp
 }
 
 func (mqr *Responder) CloseResponder() error {

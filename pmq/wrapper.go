@@ -87,7 +87,10 @@ func (bdr *BidirectionalQueue) HasErrors() bool {
 }
 
 func (bdr *BidirectionalQueue) Error() error {
-	return fmt.Errorf("responder: %w\nrequester: %w", bdr.ErrResp, bdr.ErrRqst)
+	if bdr.ErrResp != nil {
+		return bdr.ErrResp
+	}
+	return bdr.ErrRqst
 }
 
 func ForceRemoveQueue(queueFile string) error {
