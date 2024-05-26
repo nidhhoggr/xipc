@@ -14,8 +14,8 @@ const maxRequestTickNum = 10
 
 const queue_name = "goqr_example_protobuf"
 
-var mqr *net.MqResponder
-var mqs *net.MqRequester
+var mqr xipc.IMqResponder
+var mqs xipc.IMqRequester
 var config = net.QueueConfig{
 	Name:             queue_name,
 	ClientTimeout:    0,
@@ -32,8 +32,8 @@ func main() {
 	<-resp_c
 	<-request_c
 
-	net.CloseRequester(mqs)
-	net.CloseResponder(mqr)
+	mqs.CloseRequester()
+	mqr.CloseResponder()
 	//gives time for deferred functions to complete
 	xipc.Sleep()
 }
@@ -114,7 +114,7 @@ func requester(c chan int) {
 	}
 }
 
-func requestUsingCmd(mqs *net.MqRequester, req *protos2.Cmd) error {
+func requestUsingCmd(mqs xipc.IMqRequester, req *protos2.Cmd) error {
 	if len(req.Id) == 0 {
 		req.Id = uuid.NewString()
 	}
@@ -122,7 +122,7 @@ func requestUsingCmd(mqs *net.MqRequester, req *protos2.Cmd) error {
 	return mqs.RequestUsingProto(&pbm)
 }
 
-func waitForCmdResponse(mqs *net.MqRequester) (*protos2.CmdResp, error) {
+func waitForCmdResponse(mqs xipc.IMqRequester) (*protos2.CmdResp, error) {
 	mqResp := &protos2.CmdResp{}
 	_, err := mqs.WaitForProto(mqResp)
 	if err != nil {
@@ -132,7 +132,7 @@ func waitForCmdResponse(mqs *net.MqRequester) (*protos2.CmdResp, error) {
 }
 
 // handleCmdRequest provides a concrete implementation of HandleRequestFromProto using the local Cmd protobuf type
-func handleCmdRequest(mqr *net.MqResponder) error {
+func handleCmdRequest(mqr xipc.IMqResponder) error {
 
 	cmd := &protos2.Cmd{}
 

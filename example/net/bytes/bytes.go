@@ -10,8 +10,8 @@ import (
 const maxRequestTickNum = 10
 const queue_name = "goqr_example_bytes"
 
-var mqr *net.MqResponder
-var mqs *net.MqRequester
+var mqr xipc.IMqResponder
+var mqs xipc.IMqRequester
 var config = net.QueueConfig{
 	Name:             queue_name,
 	ClientTimeout:    0,
@@ -28,8 +28,8 @@ func main() {
 	<-resp_c
 	<-request_c
 
-	net.CloseRequester(mqs)
-	net.CloseResponder(mqr)
+	mqs.CloseRequester()
+	mqr.CloseResponder()
 	//gives time for deferred functions to complete
 	xipc.Sleep()
 }
@@ -62,9 +62,7 @@ func responder(c chan int) {
 		if count >= maxRequestTickNum {
 			break
 		}
-
 	}
-
 }
 
 func requester(c chan int) {

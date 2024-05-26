@@ -18,16 +18,15 @@ func TestRecvErrwithNonblocking(t *testing.T) {
 		Flags: pmq.O_RDWR | pmq.O_CREAT | pmq.O_NONBLOCK,
 	}
 	mqr := pmq.NewResponder(&config, nil)
-	assertNil(t, mqr.ErrResp)
-	assertNil(t, mqr.ErrRqst)
+	assert(t, !mqr.HasErrors())
 	assertNotNil(t, mqr)
 
-	msg, _, err := mqr.MqRqst.Receive()
+	msg, err := mqr.Read()
 
 	assertNil(t, msg)
 	assertNotNil(t, err)
 	assertEqual(t, syscall.EAGAIN, err.(syscall.Errno))
-	err = mqr.UnlinkResponder()
+	err = mqr.CloseResponder()
 	assertNil(t, err)
 }
 
@@ -38,15 +37,14 @@ func TestRecvwithNonblocking(t *testing.T) {
 		Flags: pmq.O_RDWR | pmq.O_CREAT | pmq.O_NONBLOCK,
 	}
 	mqr := pmq.NewResponder(&config, nil)
-	assertNil(t, mqr.ErrResp)
-	assertNil(t, mqr.ErrRqst)
+	assert(t, !mqr.HasErrors())
 	assertNotNil(t, mqr)
 
 	err := mqr.HandleRequest(func(request []byte) (processed []byte, err error) {
 		return []byte(fmt.Sprintf("I recieved request: %s\n", request)), nil
 	})
 	assertNil(t, err)
-	err = mqr.UnlinkResponder()
+	err = mqr.CloseResponder()
 	assertNil(t, err)
 }
 
@@ -57,17 +55,22 @@ func TestRecvErrwithBlocking(t *testing.T) {
 		Flags: pmq.O_RDWR | pmq.O_CREAT,
 	}
 	mqr := pmq.NewResponder(&config, nil)
-	assertNil(t, mqr.ErrResp)
-	assertNil(t, mqr.ErrRqst)
+	assert(t, !mqr.HasErrors())
 	assertNotNil(t, mqr)
 
-	msg, _, err := mqr.MqRqst.TimedReceive(time.Second)
+	msg, err := mqr.ReadTimed(time.Second)
 
 	assertNil(t, msg)
 	assertNotNil(t, err)
 	assertEqual(t, syscall.ETIMEDOUT, err.(syscall.Errno))
-	err = mqr.UnlinkResponder()
+	err = mqr.CloseResponder()
 	assertNil(t, err)
+}
+
+func assert(t *testing.T, i bool) {
+	if !i {
+		t.Errorf("expected %-v to be true", i)
+	}
 }
 
 func assertNil(t *testing.T, i interface{}) {

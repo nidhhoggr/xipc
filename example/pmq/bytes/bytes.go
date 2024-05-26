@@ -32,7 +32,7 @@ func responder(c chan int) {
 	}
 	mqr := pmq.NewResponder(&config, nil)
 	defer func() {
-		pmq.UnlinkResponder(mqr)
+		mqr.CloseResponder()
 		fmt.Println("Responder: finished and unlinked")
 		c <- 0
 	}()
@@ -64,7 +64,7 @@ func requester(c chan int) {
 		Name: queue_name,
 	}, nil)
 	defer func() {
-		pmq.CloseRequester(mqs)
+		mqs.CloseRequester()
 		fmt.Println("Requester: finished and closed")
 		c <- 0
 	}()

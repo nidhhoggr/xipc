@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/joe-at-startupmedia/xipc"
 	"github.com/joe-at-startupmedia/xipc/pmq"
 	"log"
 	"time"
@@ -30,7 +31,7 @@ func responder(c chan int) {
 	}
 	mqr := pmq.NewResponder(&config, nil)
 	defer func() {
-		pmq.UnlinkResponder(mqr)
+		mqr.CloseResponder()
 		fmt.Println("Responder: finished and unlinked")
 		c <- 0
 	}()
@@ -67,7 +68,7 @@ func requester(c chan int) {
 		Name: queue_name,
 	}, nil)
 	defer func() {
-		pmq.CloseRequester(mqs)
+		mqs.CloseRequester()
 		fmt.Println("Requester: finished and closed")
 	}()
 	if mqs.HasErrors() {
@@ -98,7 +99,7 @@ func requester(c chan int) {
 	<-c
 }
 
-func requestResponse(mqs *pmq.MqRequester, msg string, c chan pmqResponse) {
+func requestResponse(mqs xipc.IMqRequester, msg string, c chan pmqResponse) {
 	if err := mqs.Request([]byte(msg)); err != nil {
 		c <- pmqResponse{fmt.Sprintf("%s", err), false}
 		return

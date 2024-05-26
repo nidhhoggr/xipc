@@ -11,6 +11,14 @@ const maxRequestTickNum = 10
 
 const queue_name = "goqr_example_mqrequest"
 
+var mqr xipc.IMqResponder
+var mqs xipc.IMqRequester
+var config = net.QueueConfig{
+	Name:             queue_name,
+	ClientTimeout:    0,
+	ClientRetryTimer: 0,
+}
+
 func main() {
 	resp_c := make(chan int)
 	go responder(resp_c)
@@ -21,18 +29,10 @@ func main() {
 	<-resp_c
 	<-request_c
 
-	net.CloseRequester(mqs)
-	net.CloseResponder(mqr)
+	mqs.CloseRequester()
+	mqr.CloseResponder()
 	//gives time for deferred functions to complete
 	xipc.Sleep()
-}
-
-var mqr *net.MqResponder
-var mqs *net.MqRequester
-var config = net.QueueConfig{
-	Name:             queue_name,
-	ClientTimeout:    0,
-	ClientRetryTimer: 0,
 }
 
 func responder(c chan int) {

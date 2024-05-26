@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/joe-at-startupmedia/posix_mq"
+	"github.com/joe-at-startupmedia/xipc"
 	"github.com/joe-at-startupmedia/xipc/example/protos"
 	"github.com/joe-at-startupmedia/xipc/pmq"
 	"google.golang.org/protobuf/proto"
@@ -39,7 +40,7 @@ func responder(c chan int) {
 	}
 	mqr := pmq.NewResponder(&config, &owner)
 	defer func() {
-		pmq.UnlinkResponder(mqr)
+		mqr.CloseResponder()
 		fmt.Println("Responder: finished and unlinked")
 		c <- 0
 	}()
@@ -70,7 +71,7 @@ func requester(c chan int) {
 		Name: queue_name,
 	}, &owner)
 	defer func() {
-		pmq.CloseRequester(mqs)
+		mqs.CloseRequester()
 		fmt.Println("Requester: finished and closed")
 		c <- 0
 	}()
@@ -113,7 +114,7 @@ func requester(c chan int) {
 	}
 }
 
-func requestUsingCmd(mqs *pmq.MqRequester, req *protos.Cmd) error {
+func requestUsingCmd(mqs xipc.IMqRequester, req *protos.Cmd) error {
 	if len(req.Id) == 0 {
 		req.Id = uuid.NewString()
 	}
@@ -121,7 +122,7 @@ func requestUsingCmd(mqs *pmq.MqRequester, req *protos.Cmd) error {
 	return mqs.RequestUsingProto(&pbm)
 }
 
-func waitForCmdResponse(mqs *pmq.MqRequester) (*protos.CmdResp, error) {
+func waitForCmdResponse(mqs xipc.IMqRequester) (*protos.CmdResp, error) {
 	mqResp := &protos.CmdResp{}
 	_, err := mqs.WaitForProto(mqResp)
 	if err != nil {
@@ -131,7 +132,7 @@ func waitForCmdResponse(mqs *pmq.MqRequester) (*protos.CmdResp, error) {
 }
 
 // handleCmdRequest provides a concrete implementation of HandleRequestFromProto using the local Cmd protobuf type
-func handleCmdRequest(mqr *pmq.MqResponder) error {
+func handleCmdRequest(mqr xipc.IMqResponder) error {
 
 	cmd := &protos.Cmd{}
 

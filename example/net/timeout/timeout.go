@@ -14,8 +14,8 @@ const maxRequestTickNum = 10
 
 const queue_name = "goqr_example_timeout"
 
-var mqr *net.MqResponder
-var mqs *net.MqRequester
+var mqr xipc.IMqResponder
+var mqs xipc.IMqRequester
 var config = net.QueueConfig{
 	Name:             queue_name,
 	ClientTimeout:    time.Second * 10,
@@ -32,8 +32,8 @@ func main() {
 	<-resp_c
 	<-request_c
 
-	net.CloseResponder(mqr)
-	net.CloseRequester(mqs)
+	mqr.CloseResponder()
+	mqs.CloseRequester()
 	//gives time for deferred functions to complete
 	xipc.Sleep()
 }
@@ -117,7 +117,7 @@ func requester(c chan int) {
 
 }
 
-func requestResponse(mqs *net.MqRequester, msg string, c chan goqResponse) {
+func requestResponse(mqs xipc.IMqRequester, msg string, c chan goqResponse) {
 
 	if len(msg) > 0 {
 		err := mqs.Request([]byte(msg))

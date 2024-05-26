@@ -1,10 +1,8 @@
 package net
 
 import (
-	"fmt"
 	"github.com/joe-at-startupmedia/gipc"
 	"github.com/joe-at-startupmedia/xipc"
-	"github.com/joe-at-startupmedia/xipc/protos"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 	"time"
@@ -16,7 +14,7 @@ type MqRequester struct {
 	Logger  *logrus.Logger
 }
 
-func NewRequester(config *QueueConfig) *MqRequester {
+func NewRequester(config *QueueConfig) xipc.IMqRequester {
 
 	logger := xipc.InitLogging(config.LogLevel)
 
@@ -28,36 +26,16 @@ func NewRequester(config *QueueConfig) *MqRequester {
 		Encryption: false,
 	})
 
-	mqs := MqRequester{
+	var mqs xipc.IMqRequester = &MqRequester{
 		requester,
 		errRqst,
 		logger,
 	}
 
-	return &mqs
+	return mqs
 }
 
-func (mqs *MqRequester) Request(data []byte) error {
-	return mqs.MqRqst.Write(DEFAULT_MSG_TYPE, data)
-}
-
-func (mqs *MqRequester) RequestUsingMqRequest(req *xipc.MqRequest) error {
-	if !req.HasId() {
-		req.SetId()
-	}
-	pbm := proto.Message(req.AsProtobuf())
-	return mqs.RequestUsingProto(&pbm)
-}
-
-func (mqs *MqRequester) RequestUsingProto(req *proto.Message) error {
-	data, err := proto.Marshal(*req)
-	if err != nil {
-		return fmt.Errorf("marshaling error: %w", err)
-	}
-	return mqs.Request(data)
-}
-
-func (mqs *MqRequester) WaitForResponse() ([]byte, error) {
+func (mqs *MqRequester) Read() ([]byte, error) {
 	msg, err := mqs.MqRqst.Read()
 	if msg.MsgType < 1 {
 		time.Sleep(xipc.REQUEST_RECURSION_WAITTIME * time.Millisecond)
@@ -67,7 +45,7 @@ func (mqs *MqRequester) WaitForResponse() ([]byte, error) {
 	}
 }
 
-func (mqs *MqRequester) WaitForResponseTimed(duration time.Duration) ([]byte, error) {
+func (mqs *MqRequester) ReadTimed(duration time.Duration) ([]byte, error) {
 	msg, err := mqs.MqRqst.ReadTimed(duration)
 	if err != nil {
 		return nil, err
@@ -82,52 +60,44 @@ func (mqs *MqRequester) WaitForResponseTimed(duration time.Duration) ([]byte, er
 	}
 }
 
-func (mqs *MqRequester) WaitForMqResponse() (*xipc.MqResponse, error) {
-	mqResp := &protos.Response{}
-	_, err := mqs.WaitForProto(mqResp)
-	if err != nil {
-		return nil, err
-	}
-	return xipc.ProtoResponseToMqResponse(mqResp), err
+func (mqs *MqRequester) Write(data []byte) error {
+	return mqs.MqRqst.Write(DEFAULT_MSG_TYPE, data)
+}
+
+func (mqs *MqRequester) Request(data []byte) error {
+	return mqs.Write(data)
+}
+
+func (mqs *MqRequester) RequestUsingMqRequest(req *xipc.MqRequest) error {
+	return xipc.RequestUsingMqRequest(mqs, req)
+}
+
+func (mqs *MqRequester) RequestUsingProto(req *proto.Message) error {
+	return xipc.RequestUsingProto(mqs, req)
+}
+
+func (mqs *MqRequester) WaitForResponse() ([]byte, error) {
+	return mqs.Read()
+}
+
+func (mqs *MqRequester) WaitForResponseTimed(duration time.Duration) ([]byte, error) {
+	return mqs.ReadTimed(duration)
 }
 
 func (mqs *MqRequester) WaitForProto(pbm proto.Message) (*proto.Message, error) {
-
-	msg, err := mqs.MqRqst.Read()
-
-	if err != nil {
-		return nil, err
-	}
-	if msg.MsgType < 1 {
-		time.Sleep(xipc.REQUEST_RECURSION_WAITTIME * time.Millisecond)
-		return mqs.WaitForProto(pbm)
-	} else {
-		err = proto.Unmarshal(msg.Data, pbm)
-		return &pbm, err
-	}
+	return xipc.WaitForProto(mqs, pbm)
 }
 
 func (mqs *MqRequester) WaitForProtoTimed(pbm proto.Message, duration time.Duration) (*proto.Message, error) {
-
-	msg, err := mqs.MqRqst.ReadTimed(duration)
-
-	if err != nil {
-		return nil, err
-	}
-	if msg.MsgType < 1 {
-		time.Sleep(xipc.REQUEST_RECURSION_WAITTIME * time.Millisecond)
-		return mqs.WaitForProtoTimed(pbm, duration)
-	} else if msg == gipc.TimeoutMessage {
-		return &pbm, gipc.TimeoutMessage.Err
-	} else {
-		err = proto.Unmarshal(msg.Data, pbm)
-		return &pbm, err
-	}
+	return xipc.WaitForProtoTimed(mqs, pbm, duration)
 }
 
-func (mqs *MqRequester) CloseRequester() error {
-	mqs.MqRqst.Close()
-	return nil
+func (mqs *MqRequester) WaitForMqResponse() (*xipc.MqResponse, error) {
+	return xipc.WaitForMqResponse(mqs)
+}
+
+func (mqs *MqRequester) WaitForMqResponseTimed(duration time.Duration) (*xipc.MqResponse, error) {
+	return xipc.WaitForMqResponseTimed(mqs, duration)
 }
 
 func (mqs *MqRequester) HasErrors() bool {
@@ -135,12 +105,10 @@ func (mqs *MqRequester) HasErrors() bool {
 }
 
 func (mqs *MqRequester) Error() error {
-	return fmt.Errorf("%w", mqs.ErrRqst)
+	return mqs.ErrRqst
 }
 
-func CloseRequester(mqs *MqRequester) error {
-	if mqs != nil {
-		return mqs.CloseRequester()
-	}
-	return fmt.Errorf("pointer reference is nil")
+func (mqs *MqRequester) CloseRequester() error {
+	mqs.MqRqst.Close()
+	return nil
 }
