@@ -78,7 +78,7 @@ func (o *Ownership) IsValid() bool {
 	return hasGroup || hasUser
 }
 
-func ApplyPermissions(o *Ownership, file string, mode int) error {
+func (o *Ownership) ApplyPermissions(file string, mode int) error {
 
 	if o != nil {
 		hasGroup, group, err := o.HasGroup()
