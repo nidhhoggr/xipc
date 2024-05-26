@@ -105,7 +105,7 @@ func requestResponse(mqs *pmq.MqRequester, msg string, c chan pmqResponse) {
 	}
 	fmt.Printf("Requester: sent a new request: %s", msg)
 
-	resp, err := mqs.WaitForResponse(time.Second * 10)
+	resp, err := mqs.WaitForResponseTimed(time.Second * 10)
 
 	if err != nil {
 		c <- pmqResponse{fmt.Sprintf("%s", err), false}

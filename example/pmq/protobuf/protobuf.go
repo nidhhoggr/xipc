@@ -97,7 +97,7 @@ func requester(c chan int) {
 
 		fmt.Printf("Requester: sent a new request: %s \n", cmd.String())
 
-		cmdResp, err := waitForCmdResponse(mqs, time.Second)
+		cmdResp, err := waitForCmdResponse(mqs)
 
 		if err != nil {
 			fmt.Printf("Requester: error getting response: %s\n", err)
@@ -121,9 +121,9 @@ func requestUsingCmd(mqs *pmq.MqRequester, req *protos.Cmd) error {
 	return mqs.RequestUsingProto(&pbm)
 }
 
-func waitForCmdResponse(mqs *pmq.MqRequester, duration time.Duration) (*protos.CmdResp, error) {
+func waitForCmdResponse(mqs *pmq.MqRequester) (*protos.CmdResp, error) {
 	mqResp := &protos.CmdResp{}
-	_, err := mqs.WaitForProto(mqResp, duration)
+	_, err := mqs.WaitForProto(mqResp)
 	if err != nil {
 		return nil, err
 	}

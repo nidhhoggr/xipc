@@ -53,27 +53,50 @@ func (mqs *MqRequester) RequestUsingProto(req *proto.Message) error {
 	return mqs.Request(data)
 }
 
-func (mqs *MqRequester) WaitForResponse(duration time.Duration) ([]byte, error) {
+func (mqs *MqRequester) WaitForResponse() ([]byte, error) {
+	msg, _, err := mqs.MqResp.Receive()
+	return msg, err
+}
+
+func (mqs *MqRequester) WaitForResponseTimed(duration time.Duration) ([]byte, error) {
 	msg, _, err := mqs.MqResp.TimedReceive(duration)
 	return msg, err
 }
 
-func (mqs *MqRequester) WaitForMqResponse(duration time.Duration) (*xipc.MqResponse, error) {
-	mqResp := &protos.Response{}
-	_, err := mqs.WaitForProto(mqResp, duration)
+func (mqs *MqRequester) WaitForProto(pbm proto.Message) (*proto.Message, error) {
+	data, _, err := mqs.MqResp.Receive()
 	if err != nil {
 		return nil, err
 	}
-	return xipc.ProtoResponseToMqResponse(mqResp), err
+	err = proto.Unmarshal(data, pbm)
+	return &pbm, err
 }
 
-func (mqs *MqRequester) WaitForProto(pbm proto.Message, duration time.Duration) (*proto.Message, error) {
+func (mqs *MqRequester) WaitForProtoTimed(pbm proto.Message, duration time.Duration) (*proto.Message, error) {
 	data, _, err := mqs.MqResp.TimedReceive(duration)
 	if err != nil {
 		return nil, err
 	}
 	err = proto.Unmarshal(data, pbm)
 	return &pbm, err
+}
+
+func (mqs *MqRequester) WaitForMqResponse() (*xipc.MqResponse, error) {
+	mqResp := &protos.Response{}
+	_, err := mqs.WaitForProto(mqResp)
+	if err != nil {
+		return nil, err
+	}
+	return xipc.ProtoResponseToMqResponse(mqResp), err
+}
+
+func (mqs *MqRequester) WaitForMqResponseTimed(duration time.Duration) (*xipc.MqResponse, error) {
+	mqResp := &protos.Response{}
+	_, err := mqs.WaitForProtoTimed(mqResp, duration)
+	if err != nil {
+		return nil, err
+	}
+	return xipc.ProtoResponseToMqResponse(mqResp), err
 }
 
 func (mqs *MqRequester) CloseRequester() error {
@@ -84,12 +107,12 @@ func (mqs *MqRequester) UnlinkRequester() error {
 	return (*BidirectionalQueue)(mqs).Unlink()
 }
 
-func (mqr *MqRequester) HasErrors() bool {
-	return (*BidirectionalQueue)(mqr).HasErrors()
+func (mqs *MqRequester) HasErrors() bool {
+	return (*BidirectionalQueue)(mqs).HasErrors()
 }
 
-func (mqr *MqRequester) Error() error {
-	return (*BidirectionalQueue)(mqr).Error()
+func (mqs *MqRequester) Error() error {
+	return (*BidirectionalQueue)(mqs).Error()
 }
 
 func CloseRequester(mqr *MqRequester) error {

@@ -130,17 +130,17 @@ func (mqs *MqRequester) CloseRequester() error {
 	return nil
 }
 
-func CloseRequester(mqs *MqRequester) error {
-	if mqs != nil {
-		return mqs.CloseRequester()
-	}
-	return fmt.Errorf("pointer reference is nil")
-}
-
 func (mqs *MqRequester) HasErrors() bool {
 	return mqs.ErrRqst != nil
 }
 
 func (mqs *MqRequester) Error() error {
 	return fmt.Errorf("%w", mqs.ErrRqst)
+}
+
+func CloseRequester(mqs *MqRequester) error {
+	if mqs != nil {
+		return mqs.CloseRequester()
+	}
+	return fmt.Errorf("pointer reference is nil")
 }

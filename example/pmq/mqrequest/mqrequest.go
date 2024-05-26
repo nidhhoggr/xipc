@@ -91,7 +91,7 @@ func requester(c chan int) {
 
 		fmt.Printf("Requester: sent a new request: %s", request)
 
-		msg, err := mqs.WaitForMqResponse(time.Second)
+		msg, err := mqs.WaitForMqResponse()
 
 		if err != nil {
 			fmt.Printf("Requester: error getting response: %s\n", err)
