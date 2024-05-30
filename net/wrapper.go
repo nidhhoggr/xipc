@@ -7,10 +7,10 @@ import (
 // QueueConfig is used to configure an instance of the message queue.
 type QueueConfig struct {
 	Name                    string
-	ServerUnmaskPermissions bool
+	LogLevel                string
 	ClientRetryTimer        time.Duration
 	ClientTimeout           time.Duration
-	LogLevel                string
+	ServerUnmaskPermissions bool
 }
 
 const (
