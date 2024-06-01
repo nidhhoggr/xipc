@@ -18,7 +18,10 @@ func NewResponder(config *QueueConfig, owner *xipc.Ownership) xipc.IResponder {
 
 	logger := xipc.InitLogging(config.LogLevel)
 
-	responder, _ := NewResponderWithOwnership(config, owner, "")
+	responder, err := NewResponderWithOwnership(config, owner, "")
+	if err != nil {
+		logger.Fatal(err)
+	}
 
 	var mqr xipc.IResponder = &Responder{
 		Resp:    responder,
