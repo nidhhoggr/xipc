@@ -11,7 +11,7 @@ import (
 
 type Responder BidirectionalQueue
 
-func NewResponder(config *QueueConfig, owner *Ownership) xipc.IResponder {
+func NewResponder(config *QueueConfig, owner *xipc.Ownership) xipc.IResponder {
 
 	requester, errRqst := openQueueForResponder(config, owner, "rqst")
 	responder, errResp := openQueueForResponder(config, owner, "resp")
@@ -26,7 +26,7 @@ func NewResponder(config *QueueConfig, owner *Ownership) xipc.IResponder {
 	return mqr
 }
 
-func openQueueForResponder(config *QueueConfig, owner *Ownership, postfix string) (*posix_mq.MessageQueue, error) {
+func openQueueForResponder(config *QueueConfig, owner *xipc.Ownership, postfix string) (*posix_mq.MessageQueue, error) {
 
 	if config.Flags == 0 {
 		config.Flags = O_RDWR | O_CREAT | O_NONBLOCK

@@ -1,4 +1,4 @@
-package pmq
+package xipc
 
 import (
 	"errors"

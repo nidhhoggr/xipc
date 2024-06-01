@@ -16,7 +16,7 @@ const maxRequestTickNum = 10
 
 const queue_name = "pmqr_example_protobuf"
 
-var owner = pmq.Ownership{
+var owner = xipc.Ownership{
 	//Username: "nobody", //uncomment to test ownership handling and errors
 }
 

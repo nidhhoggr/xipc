@@ -35,7 +35,7 @@ func main() {
 }
 
 func responder(c chan int) {
-	mqr := mem.NewResponder(config)
+	mqr := mem.NewResponder(config, nil)
 	defer func() {
 		mqr.CloseResponder()
 		fmt.Println("Responder: finished and unlinked")

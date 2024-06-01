@@ -9,7 +9,7 @@ import (
 
 type Requester BidirectionalQueue
 
-func NewRequester(config *QueueConfig, owner *Ownership) xipc.IRequester {
+func NewRequester(config *QueueConfig, owner *xipc.Ownership) xipc.IRequester {
 
 	requester, errRqst := openQueueForRequester(config, owner, "rqst")
 	responder, errResp := openQueueForRequester(config, owner, "resp")
@@ -24,7 +24,7 @@ func NewRequester(config *QueueConfig, owner *Ownership) xipc.IRequester {
 	return mqs
 }
 
-func openQueueForRequester(config *QueueConfig, owner *Ownership, postfix string) (*posix_mq.MessageQueue, error) {
+func openQueueForRequester(config *QueueConfig, owner *xipc.Ownership, postfix string) (*posix_mq.MessageQueue, error) {
 	if config.Flags == 0 {
 		config.Flags = O_RDWR
 	}

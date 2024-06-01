@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/joe-at-startupmedia/posix_mq"
+	"github.com/joe-at-startupmedia/xipc"
 )
 
 type QueueConfig posix_mq.QueueConfig
@@ -29,7 +30,7 @@ func NewMessageQueue(config *QueueConfig) (*posix_mq.MessageQueue, error) {
 	return posix_mq.NewMessageQueue((*posix_mq.QueueConfig)(config))
 }
 
-func NewMessageQueueWithOwnership(config QueueConfig, owner *Ownership, postfix string) (*posix_mq.MessageQueue, error) {
+func NewMessageQueueWithOwnership(config QueueConfig, owner *xipc.Ownership, postfix string) (*posix_mq.MessageQueue, error) {
 
 	if len(postfix) > 0 {
 		config.Name = fmt.Sprintf("%s_%s", config.Name, postfix)

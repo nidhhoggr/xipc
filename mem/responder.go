@@ -14,11 +14,11 @@ type Responder struct {
 	logger  *logrus.Logger
 }
 
-func NewResponder(config *QueueConfig) xipc.IResponder {
+func NewResponder(config *QueueConfig, owner *xipc.Ownership) xipc.IResponder {
 
 	logger := xipc.InitLogging(config.LogLevel)
 
-	responder := shmemipc.NewResponder(config.BasePath+config.Name, config.MaxMsgSize)
+	responder, _ := NewResponderWithOwnership(config, owner, "")
 
 	var mqr xipc.IResponder = &Responder{
 		Resp:    responder,
