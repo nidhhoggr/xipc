@@ -12,6 +12,7 @@ type QueueConfig struct {
 	BasePath   string
 	LogLevel   string
 	MaxMsgSize uint64
+	Flags      int
 	Mode       int
 }
 
@@ -34,7 +35,7 @@ func NewResponderWithOwnership(config *QueueConfig, owner *xipc.Ownership, postf
 		}
 	}
 
-	responder := shmemipc.NewResponder(config.GetFile(""), config.MaxMsgSize)
+	responder := shmemipc.NewResponder(config.GetFile(""), config.MaxMsgSize, config.Flags)
 	if err := responder.GetError(); err != nil {
 		return nil, errors.New(fmt.Sprintf("Could not create message queue %s: %-v", config.GetFile(""), err))
 	}
