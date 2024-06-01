@@ -39,12 +39,12 @@ func NewResponderWithOwnership(config *QueueConfig, owner *xipc.Ownership, postf
 		return nil, errors.New(fmt.Sprintf("Could not create message queue %s: %-v", config.GetFile(""), err))
 	}
 
-	err := ApplyOwnership(config, owner, "_rqst")
+	err := ApplyOwnership(config, owner, "rqst")
 	if err != nil {
 		return responder, err
 	}
 
-	err = ApplyOwnership(config, owner, "_resp")
+	err = ApplyOwnership(config, owner, "resp")
 	if err != nil {
 		return responder, err
 	}
