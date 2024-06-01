@@ -41,12 +41,12 @@ func NewResponderWithOwnership(config *QueueConfig, owner *xipc.Ownership, postf
 
 	err := ApplyOwnership(config, owner, "_rqst")
 	if err != nil {
-		return nil, err
+		return responder, err
 	}
 
 	err = ApplyOwnership(config, owner, "_resp")
 	if err != nil {
-		return nil, err
+		return responder, err
 	}
 
 	return responder, nil
