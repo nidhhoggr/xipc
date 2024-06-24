@@ -69,8 +69,8 @@ github.com/joe-at-startupmedia/gipc v0.0.1 h1:pPr2vtzzrnoo5pvs1xHtfs4tUhovaMAoBl
 github.com/joe-at-startupmedia/gipc v0.0.1/go.mod h1:n5cTkR14mHykdyjs97dHf5/wnyF8UCtRx8iNic2mgLU=
 github.com/joe-at-startupmedia/posix_mq v0.2.1 h1:Ir6IjNiXOwjI16GCIG19vzlvKV1/Q8uorq49cpCc9fc=
 github.com/joe-at-startupmedia/posix_mq v0.2.1/go.mod h1:GophHPEoG4aMbaFcb/2UyXKR7wWyWL4AW+1BoynoIdU=
-github.com/joe-at-startupmedia/shmemipc v0.0.7 h1:QrMlg0XrYj++20Is1Fy4mURDqDXZz/55K2fJMHKVCIc=
-github.com/joe-at-startupmedia/shmemipc v0.0.7/go.mod h1:+N4Iw6TKExMJhU35ehU0nOl08YhiukV3P/KZSvRrQ/E=
+github.com/joe-at-startupmedia/shmemipc v0.0.8 h1:t/vJsJ/D3/B8BrpbBWP3wxU0v991RIyRxOsCSuzxOnk=
+github.com/joe-at-startupmedia/shmemipc v0.0.8/go.mod h1:+N4Iw6TKExMJhU35ehU0nOl08YhiukV3P/KZSvRrQ/E=
 github.com/jung-kurt/gofpdf v1.0.0/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
 github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
 github.com/klauspost/compress v1.13.1/go.mod h1:8dP1Hq4DHOhN9w426knH3Rhby4rFm6D8eO+e+Dq5Gzg=
