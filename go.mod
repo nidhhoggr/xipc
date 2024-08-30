@@ -1,12 +1,14 @@
 module github.com/joe-at-startupmedia/xipc
 
-go 1.21
+go 1.22
+
+toolchain go1.22.4
 
 require (
 	github.com/google/uuid v1.6.0
 	github.com/joe-at-startupmedia/gipc v0.0.1
 	github.com/joe-at-startupmedia/posix_mq v0.2.1
-	github.com/joe-at-startupmedia/shmemipc v0.0.10
+	github.com/joe-at-startupmedia/shmemipc v0.0.12
 	github.com/sirupsen/logrus v1.9.3
 	google.golang.org/protobuf v1.34.2
 )

@@ -13,8 +13,8 @@ github.com/joe-at-startupmedia/go-arrow v0.0.1 h1:PKSX9vBE5aIiEMuAqea6zSrCJqadFN
 github.com/joe-at-startupmedia/go-arrow v0.0.1/go.mod h1:E8kMKt8ha0UqLyFEtPrArmipY4OArTpdxqzaMGpsopw=
 github.com/joe-at-startupmedia/posix_mq v0.2.1 h1:Ir6IjNiXOwjI16GCIG19vzlvKV1/Q8uorq49cpCc9fc=
 github.com/joe-at-startupmedia/posix_mq v0.2.1/go.mod h1:GophHPEoG4aMbaFcb/2UyXKR7wWyWL4AW+1BoynoIdU=
-github.com/joe-at-startupmedia/shmemipc v0.0.10 h1:PEUeQLt8xDcz/grBAaRFFF4QOwIbv8lQDnwzr9564Nc=
-github.com/joe-at-startupmedia/shmemipc v0.0.10/go.mod h1:7WyKrzdmQEHKZGM9BKzkEKR8AH0/4rZ29r3Vy5BD8sU=
+github.com/joe-at-startupmedia/shmemipc v0.0.12 h1:K7Uxq5mK9yIhd2+Mx8CHl5fF5KzwAZArCesEP1RZxZg=
+github.com/joe-at-startupmedia/shmemipc v0.0.12/go.mod h1:7WyKrzdmQEHKZGM9BKzkEKR8AH0/4rZ29r3Vy5BD8sU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sirupsen/logrus v1.9.3 h1:dueUQJ1C2q9oE3F7wvmSGAaVtTmUizReu6fjN8uqzbQ=
