@@ -83,11 +83,11 @@ func (o *Ownership) ApplyPermissions(file string, mode int) error {
 	if o != nil {
 		hasGroup, group, err := o.HasGroup()
 		if err != nil {
-			return errors.New("Cannot get group")
+			return errors.New("cannot get group")
 		}
 		hasUser, user, err := o.HasUser()
 		if err != nil {
-			return errors.New("Cannot get user")
+			return errors.New("cannot get user")
 		}
 
 		if hasGroup || hasUser {
@@ -96,9 +96,9 @@ func (o *Ownership) ApplyPermissions(file string, mode int) error {
 			return os.Chmod(file, os.FileMode(mode))
 		}
 		if hasGroup && hasUser {
-			err = os.Chown(file, user.Gid, group.Gid)
+			err = os.Chown(file, user.Uid, group.Gid)
 		} else if hasUser {
-			err = os.Chown(file, user.Gid, user.Gid)
+			err = os.Chown(file, user.Uid, user.Gid)
 		}
 		return err
 	} else {

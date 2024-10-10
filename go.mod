@@ -1,8 +1,6 @@
 module github.com/joe-at-startupmedia/xipc
 
-go 1.22
-
-toolchain go1.22.4
+go 1.21
 
 require (
 	github.com/google/uuid v1.6.0
@@ -15,7 +13,6 @@ require (
 
 require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
-	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/joe-at-startupmedia/go-arrow v0.0.1 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 )
