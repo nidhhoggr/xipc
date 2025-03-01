@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+const Version string = "0.0.13"
+
 const (
 	REQUEST_RECURSION_WAITTIME  = 200
 	DEFAULT_LOG_LEVEL           = logrus.ErrorLevel
