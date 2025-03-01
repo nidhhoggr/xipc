@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-const Version string = "0.0.13"
+const Version string = "0.0.14"
 
 const (
 	REQUEST_RECURSION_WAITTIME  = 200
