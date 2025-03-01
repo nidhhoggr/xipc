@@ -1,8 +1,8 @@
 package mem
 
 import (
-	"github.com/joe-at-startupmedia/shmemipc"
-	"github.com/joe-at-startupmedia/xipc"
+	"github.com/nidhhoggr/shmemipc"
+	"github.com/nidhhoggr/xipc"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 	"time"

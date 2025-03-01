@@ -3,9 +3,9 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/joe-at-startupmedia/gipc"
-	"github.com/joe-at-startupmedia/xipc"
-	"github.com/joe-at-startupmedia/xipc/net"
+	"github.com/nidhhoggr/gipc"
+	"github.com/nidhhoggr/xipc"
+	"github.com/nidhhoggr/xipc/net"
 	"log"
 	"time"
 )

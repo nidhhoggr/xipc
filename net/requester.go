@@ -1,8 +1,8 @@
 package net
 
 import (
-	"github.com/joe-at-startupmedia/gipc"
-	"github.com/joe-at-startupmedia/xipc"
+	"github.com/nidhhoggr/gipc"
+	"github.com/nidhhoggr/xipc"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 	"time"

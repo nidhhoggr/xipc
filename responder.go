@@ -2,7 +2,7 @@ package xipc
 
 import (
 	"fmt"
-	"github.com/joe-at-startupmedia/xipc/protos"
+	"github.com/nidhhoggr/xipc/protos"
 	"google.golang.org/protobuf/proto"
 	"time"
 )

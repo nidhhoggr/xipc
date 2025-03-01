@@ -2,7 +2,7 @@ package pmq_test
 
 import (
 	"fmt"
-	"github.com/joe-at-startupmedia/xipc/pmq"
+	"github.com/nidhhoggr/xipc/pmq"
 	"reflect"
 	"syscall"
 	"testing"

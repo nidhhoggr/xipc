@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/joe-at-startupmedia/xipc"
-	protos2 "github.com/joe-at-startupmedia/xipc/example/protos"
-	"github.com/joe-at-startupmedia/xipc/net"
+	"github.com/nidhhoggr/xipc"
+	protos "github.com/nidhhoggr/xipc/example/protos"
+	"github.com/nidhhoggr/xipc/net"
 	"google.golang.org/protobuf/proto"
 	"log"
 )
@@ -85,10 +85,10 @@ func requester(c chan int) {
 	count := 0
 	for {
 		count++
-		cmd := &protos2.Cmd{
+		cmd := &protos.Cmd{
 			Name: "restart",
 			Arg1: fmt.Sprintf("%d", count), //using count as the id of the process
-			ExecFlags: &protos2.ExecFlags{
+			ExecFlags: &protos.ExecFlags{
 				User: "nonroot",
 			},
 		}
@@ -114,7 +114,7 @@ func requester(c chan int) {
 	}
 }
 
-func requestUsingCmd(mqs xipc.IRequester, req *protos2.Cmd) error {
+func requestUsingCmd(mqs xipc.IRequester, req *protos.Cmd) error {
 	if len(req.Id) == 0 {
 		req.Id = uuid.NewString()
 	}
@@ -122,8 +122,8 @@ func requestUsingCmd(mqs xipc.IRequester, req *protos2.Cmd) error {
 	return mqs.RequestUsingProto(&pbm)
 }
 
-func waitForCmdResponse(mqs xipc.IRequester) (*protos2.CmdResp, error) {
-	Resp := &protos2.CmdResp{}
+func waitForCmdResponse(mqs xipc.IRequester) (*protos.CmdResp, error) {
+	Resp := &protos.CmdResp{}
 	_, err := mqs.WaitForProto(Resp)
 	if err != nil {
 		return nil, err
@@ -134,11 +134,11 @@ func waitForCmdResponse(mqs xipc.IRequester) (*protos2.CmdResp, error) {
 // handleCmdRequest provides a concrete implementation of HandleRequestFromProto using the local Cmd protobuf type
 func handleCmdRequest(mqr xipc.IResponder) error {
 
-	cmd := &protos2.Cmd{}
+	cmd := &protos.Cmd{}
 
 	return mqr.HandleRequestFromProto(cmd, func() (processed []byte, err error) {
 
-		cmdResp := protos2.CmdResp{}
+		cmdResp := protos.CmdResp{}
 		cmdResp.Id = cmd.Id
 		cmdResp.ValueStr = fmt.Sprintf("I recieved request: %s(%s) - %s\n", cmd.Name, cmd.Id, cmd.Arg1)
 

@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/joe-at-startupmedia/xipc"
-	"github.com/joe-at-startupmedia/xipc/example/protos"
-	"github.com/joe-at-startupmedia/xipc/mem"
+	"github.com/nidhhoggr/xipc"
+	"github.com/nidhhoggr/xipc/example/protos"
+	"github.com/nidhhoggr/xipc/mem"
 	"google.golang.org/protobuf/proto"
 	"log"
 	"time"

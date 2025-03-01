@@ -3,8 +3,8 @@ package mem
 import (
 	"errors"
 	"fmt"
-	"github.com/joe-at-startupmedia/shmemipc"
-	"github.com/joe-at-startupmedia/xipc"
+	"github.com/nidhhoggr/shmemipc"
+	"github.com/nidhhoggr/xipc"
 )
 
 type QueueConfig struct {

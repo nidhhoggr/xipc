@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/joe-at-startupmedia/xipc/mem"
+	"github.com/nidhhoggr/xipc/mem"
 	"log"
 	"time"
 )

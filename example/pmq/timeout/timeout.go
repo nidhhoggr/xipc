@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/joe-at-startupmedia/xipc"
-	"github.com/joe-at-startupmedia/xipc/pmq"
+	"github.com/nidhhoggr/xipc"
+	"github.com/nidhhoggr/xipc/pmq"
 	"log"
 	"time"
 
-	"github.com/joe-at-startupmedia/posix_mq"
+	"github.com/nidhhoggr/posix_mq"
 )
 
 const maxRequestTickNum = 10

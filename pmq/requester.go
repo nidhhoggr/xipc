@@ -1,8 +1,8 @@
 package pmq
 
 import (
-	"github.com/joe-at-startupmedia/posix_mq"
-	"github.com/joe-at-startupmedia/xipc"
+	"github.com/nidhhoggr/posix_mq"
+	"github.com/nidhhoggr/xipc"
 	"google.golang.org/protobuf/proto"
 	"time"
 )

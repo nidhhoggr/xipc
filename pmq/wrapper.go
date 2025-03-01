@@ -3,8 +3,8 @@ package pmq
 import (
 	"errors"
 	"fmt"
-	"github.com/joe-at-startupmedia/posix_mq"
-	"github.com/joe-at-startupmedia/xipc"
+	"github.com/nidhhoggr/posix_mq"
+	"github.com/nidhhoggr/xipc"
 )
 
 type QueueConfig posix_mq.QueueConfig

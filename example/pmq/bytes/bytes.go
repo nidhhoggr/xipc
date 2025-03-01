@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/joe-at-startupmedia/posix_mq"
-	"github.com/joe-at-startupmedia/xipc/pmq"
+	"github.com/nidhhoggr/posix_mq"
+	"github.com/nidhhoggr/xipc/pmq"
 	"log"
 	"time"
 )
